@@ -15,9 +15,9 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @Configuration
 @EnableScheduling
-public class ScheduledTasksConfiguration {
+public class ScheduledTasksConfig {
 
-	private static final Logger log = LoggerFactory.getLogger(ScheduledTasksConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(ScheduledTasksConfig.class);
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 	// Scheduler time periods

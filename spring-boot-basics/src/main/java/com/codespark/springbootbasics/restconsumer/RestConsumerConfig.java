@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestConsumerConfiguration {
+public class RestConsumerConfig {
 
 	/**
 	 * Spring provides a convenient template class called RestTemplate. RestTemplate

@@ -43,7 +43,7 @@ public class SimpleRestConsumer {
 		 */
 		WeatherData weatherData = (WeatherData) restTemplate.getForObject(API_URL, WeatherData.class);
 
-		log.info(String.format("Collected weather info for location %s", weatherData.getLocation()));
+		log.info(String.format("Collected weather info for location %s", weatherData.getName()));
 		log.info(weatherData.toString());
 
 		return new ResponseEntity<WeatherData>(weatherData, HttpStatus.OK);
