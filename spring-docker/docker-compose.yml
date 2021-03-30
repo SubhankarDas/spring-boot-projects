@@ -1,0 +1,65 @@
+version: '3'
+services:
+  demo-app:
+    container_name: app
+    image: demo-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - 8080:8080
+    restart: unless-stopped
+    networks:
+    - backend
+    depends_on:
+    - mysql
+    - postgres
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+    - 3301:3306
+    restart: always
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testuser@123
+      MYSQL_ROOT_PASSWORD: admin123
+    volumes:
+    - mysql-data:/var/lib/mysql
+    networks:
+    - backend
+  postgres:
+    image: postgres:latest
+    networks:
+    - backend
+    container_name: postgres
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    expose:
+    - 5432
+    ports:
+    - 5432:5432
+    environment:
+    - POSTGRES_PASSWORD=admin
+    - POSTGRES_USER=postgres
+    - POSTGRES_DB=testdb
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:4.16
+    networks:
+    - backend
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    ports:
+    - ${PGADMIN_PORT:-5050}:80
+    restart: unless-stopped
+volumes:
+  mysql-data: null
+  postgres-data: null
+networks:
+  backend: null
