@@ -2,8 +2,7 @@ package com.codespark.springbootbasics.redisdata.data;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import lombok.AllArgsConstructor;

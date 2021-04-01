@@ -2,13 +2,11 @@ package com.codespark.springbootbasics.redisdata;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.codespark.springbootbasics.redisdata.cache.DataService;
 import com.codespark.springbootbasics.redisdata.data.Report;
 import com.codespark.springbootbasics.redisdata.data.ReportRepository;
-import com.codespark.springbootbasics.redisdata.data.ReportService;
 import com.codespark.springbootbasics.redisdata.messagequeue.RedisMessagePublisher;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +22,7 @@ public class RedisBootstrap implements CommandLineRunner {
 	private ReportRepository reportRepository;
 
 	@Autowired
-	private ReportService reportService;
-
-	@Autowired
 	private DataService dataService;
-
-	@Autowired
-	RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -50,24 +42,17 @@ public class RedisBootstrap implements CommandLineRunner {
 	}
 
 	private void redisAsDatabase() {
-		reportRepository.deleteAll();
-
-		// Using Redis hash auto configured repository
+		// Using custom Redis hash CRUD implementations
 		reportRepository.save(new Report("Sales", "Azim", 120000.12));
 		reportRepository.save(new Report("Revenue", "Ratan", 376000.45));
-
-		// Using custom Redis hash CRUD implementations
-		reportService.save(new Report("Loss", "Parker", 78400.87));
-		reportService.save(new Report("Market", "Jenny", 8500.6));
+		reportRepository.save(new Report("Loss", "Parker", 78400.87));
+		reportRepository.save(new Report("Market", "Jenny", 8500.6));
 
 		log.info("Finished database setup for reports");
 		log.info("Getting reports from database");
 
 		// Reading data from both types of managed hashes
 		reportRepository.findAll().forEach(report -> {
-			log.info(report.toString());
-		});
-		reportService.findAll().forEach(report -> {
 			log.info(report.toString());
 		});
 	}
