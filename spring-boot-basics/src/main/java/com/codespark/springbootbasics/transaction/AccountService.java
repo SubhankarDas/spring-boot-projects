@@ -2,6 +2,7 @@ package com.codespark.springbootbasics.transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -18,17 +19,17 @@ public class AccountService {
 	@Autowired
 	private AccountRepository accountRepository;
 
-	public void createSavingsAccount(int id, String name) {
-		accountRepository.save(new Account(id, name, new BigDecimal(10)));
+	public Account createSavingsAccount(int id, String name) {
 		logger.info("Created new savings account for " + name);
+		return accountRepository.save(new Account(id, name, new BigDecimal(10)));
 	}
 
-	public void depositToSavingsAccount(int accountId, BigDecimal amount) {
+	public Account depositToSavingsAccount(int accountId, BigDecimal amount) {
 		Account account = accountRepository.findById(accountId)
 				.orElseThrow(() -> new RuntimeException("Account not found"));
 		account.setBalance(account.getBalance().add(amount));
-		accountRepository.save(account);
 		logger.info("Rs. " + amount + " deposited to the savings account for " + account.getName());
+		return accountRepository.save(account);
 	}
 
 	/**
@@ -38,13 +39,14 @@ public class AccountService {
 	 * 
 	 * @param accountId Account ID
 	 * @param amount    Transaction amount
+	 * @return
 	 */
-	public void withdrawFromSavingsAccount(int accountId, BigDecimal amount) {
+	public Account withdrawFromSavingsAccount(int accountId, BigDecimal amount) {
 		Account account = accountRepository.findById(accountId)
 				.orElseThrow(() -> new RuntimeException("Account not found"));
 		account.setBalance(account.getBalance().subtract(amount));
-		accountRepository.save(account);
 		logger.info("Rs. " + amount + " withdrawn from the savings account for " + account.getName());
+		return accountRepository.save(account);
 	}
 
 	/**
@@ -60,16 +62,18 @@ public class AccountService {
 	 * 
 	 * @param accountId Account ID
 	 * @param amounts   Transaction amounts
+	 * @return
 	 */
 	@Transactional
-	public void withdrawFromSavingsAccount(int accountId, List<BigDecimal> amounts) {
+	public Optional<Account> withdrawFromSavingsAccount(int accountId, List<BigDecimal> amounts) {
 		for (BigDecimal amount : amounts) {
 			Account account = accountRepository.findById(accountId)
 					.orElseThrow(() -> new RuntimeException("Account not found"));
 			account.setBalance(account.getBalance().subtract(amount));
-			accountRepository.save(account);
 			logger.info("Rs. " + amount + " withdrawn from the savings account for " + account.getName());
+			accountRepository.save(account);
 		}
+		return accountRepository.findById(accountId);
 	}
 
 }
